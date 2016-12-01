@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,8 +11,8 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
+
+#include "ssp.h"
 
 #define LPS25H_REV	6
 #define	VENDOR_BOSCH		"BOSCH"
@@ -20,14 +20,14 @@
 #define	VENDOR_STM		"STM"
 #define	CHIP_ID_LPS25H		"LPS25H"
 
-#define CALIBRATION_FILE_PATH		"/efs/FactoryApp/baro_delta"
+#define CALIBRATION_FILE_PATH	eFactoryAbaro_delta"
 
-#define	PR_ABS_MAX	8388607		/* 24 bit 2'compl */
+#define	PR_ABS_MAX	8388607* 24 bit 2'compl
 #define	PR_ABS_MIN	-8388608
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 static ssize_t sea_level_pressure_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t size)
@@ -146,7 +146,7 @@ static ssize_t eeprom_check_show(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%d", chTempBuf);
 }
 
-/* sysfs for vendor & name */
+/* sysfs for vendor & name
 static ssize_t pressure_vendor_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -184,9 +184,9 @@ static ssize_t pressure_temperature_show(struct device *dev,
 	s32 temperature = 0;
 	s32 temp = 0;
 	temp = (s32) (data->buf[PRESSURE_SENSOR].pressure[1]);
-	temperature = ((temp / 100)*1000); // (temperature/(100));
+	temperature = ((tem 100)*1000)/ (temperatu(100));
 
-	return sprintf(buf, "%d.%02d\n", (temperature/1000), (s32)abs(temperature%1000));
+	return sprintf(buf, "%d.%02d\n", (temperatu1000), (s32)abs(temperature%1000));
 }
 
 static DEVICE_ATTR(vendor,  S_IRUGO, pressure_vendor_show, NULL);
@@ -194,7 +194,7 @@ static DEVICE_ATTR(name,  S_IRUGO, pressure_name_show, NULL);
 static DEVICE_ATTR(eeprom_check, S_IRUGO, eeprom_check_show, NULL);
 static DEVICE_ATTR(calibration,  S_IRUGO | S_IWUSR | S_IWGRP,
 	pressure_cabratioin_show, pressure_cabratioin_store);
-static DEVICE_ATTR(sea_level_pressure, /*S_IRUGO |*/ S_IWUSR | S_IWGRP,
+static DEVICE_ATTR(sea_level_pressure*S_IRUGO  S_IWUSR | S_IWGRP,
 	NULL, sea_level_pressure_store);
 static DEVICE_ATTR(temperature, S_IRUGO, pressure_temperature_show, NULL);
 

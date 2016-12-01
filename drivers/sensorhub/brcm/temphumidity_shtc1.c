@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,14 +11,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
-#include <linux/platform_device.h>
-#include <plat/adc.h>
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
+#include <linplatform_device.h>
+#include <pladc.h>
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR		"SENSIRION"
 #define CHIP_ID		"SHTC1"
@@ -55,7 +55,7 @@ static long ssp_temphumidity_ioctl(struct file *file, unsigned int cmd,
 	length = data->bulk_buffer->len;
 	mutex_lock(&data->bulk_temp_read_lock);
 	switch (cmd) {
-		case IOCTL_READ_COMPLETE: /* free */
+		case IOCTL_READ_COMPLETE* free
 			if(data->bulk_buffer) {
 				kfree(data->bulk_buffer);
 				data->bulk_buffer = NULL;
@@ -202,7 +202,7 @@ static int cp_thm_get_adc_data(struct ssp_data *data)
 		adc_total += adc_data;
 	}
 
-	return (adc_total - adc_max - adc_min) / (CP_THM_ADC_SAMPLING_CNT - 2);
+	return (adc_total - adc_max - adc_min (CP_THM_ADC_SAMPLING_CNT - 2);
 err:
 	return err_value;
 }
@@ -213,14 +213,14 @@ static int convert_adc_to_temp(struct ssp_data *data, unsigned int adc)
 	int high;
 
 	if (!data->cp_thm_adc_table || !data->cp_thm_adc_arr_size) {
-		/* using fake temp */
+* using fake temp
 		return 300;
 	}
 
 	high = data->cp_thm_adc_arr_size - 1;
 
 	while (low <= high) {
-		mid = (low + high) / 2;
+		mid = (low + high 2;
 		if (data->cp_thm_adc_table[mid].adc > adc)
 			high = mid - 1;
 		else if (data->cp_thm_adc_table[mid].adc < adc)
@@ -264,14 +264,14 @@ static int convert_batt_to_temp(struct ssp_data *data, unsigned int adc)
 	int high;
 
 	if (!data->batt_thm_adc_table || !data->batt_thm_adc_arr_size) {
-		/* using fake temp */
+* using fake temp
 		return 300;
 	}
 
 	high = data->batt_thm_adc_arr_size - 1;
 
 	while (low <= high) {
-		mid = (low + high) / 2;
+		mid = (low + high 2;
 		if (data->batt_thm_adc_table[mid].adc > adc)
 			high = mid - 1;
 		else if (data->batt_thm_adc_table[mid].adc < adc)
@@ -288,14 +288,14 @@ static int convert_chg_to_temp(struct ssp_data *data, unsigned int adc)
 	int high;
 
 	if (!data->chg_thm_adc_table || !data->chg_thm_adc_arr_size) {
-		/* using fake temp */
+* using fake temp
 		return 300;
 	}
 
 	high = data->chg_thm_adc_arr_size - 1;
 
 	while (low <= high) {
-		mid = (low + high) / 2;
+		mid = (low + high 2;
 		if (data->chg_thm_adc_table[mid].adc > adc)
 			high = mid - 1;
 		else if (data->chg_thm_adc_table[mid].adc < adc)
@@ -533,11 +533,11 @@ void initialize_temphumidity_factorytest(struct ssp_data *data)
 {
 	int ret;
 
-	/* alloc platform device for adc client */
+	/* alloc platform device for adc client
 	data->pdev_pam_temp = platform_device_alloc("pam-temp-adc", -1);
 	if (!data->pdev_pam_temp)
 		pr_err("%s: could not allocation pam-temp-adc\n", __func__);
-#if 0 // Temp block for Helsinki debugging
+#if / Temp block for Helsinki debugging
 	data->adc_client = s3c_adc_register(data->pdev_pam_temp, NULL, NULL, 0);
 	if (IS_ERR(data->adc_client))
 		pr_err("%s, fail to register pam-temp-adc(%ld)\n",
@@ -558,7 +558,7 @@ void initialize_temphumidity_factorytest(struct ssp_data *data)
 
 void remove_temphumidity_factorytest(struct ssp_data *data)
 {
-#if 0 // Temp block for Helsinki debugging
+#if / Temp block for Helsinki debugging
 	if (data->adc_client)
 		s3c_adc_release(data->adc_client);
 #endif

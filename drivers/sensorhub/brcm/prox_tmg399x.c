@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,14 +11,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
+
+#include "ssp.h"
 
 #define	VENDOR		"AMS"
 #define	CHIP_ID		"TMG399X"
 
-#define CANCELATION_FILE_PATH	"/efs/prox_cal"
-#define LCD_LDI_FILE_PATH	"/sys/class/lcd/panel/window_type"
+#define CANCELATION_FILE_PATHeprox_cal"
+#define LCD_LDI_FILE_PATHsclalpanwindow_type"
 
 #define LINE_1		'4'
 #define LINE_2		'2'
@@ -32,9 +32,9 @@
 #define WHITE_HIGH_THRESHOLD	185
 #define WHITE_LOW_THRESHOLD	145
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 static ssize_t prox_vendor_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
@@ -220,7 +220,7 @@ int proximity_open_calibration(struct ssp_data *data)
 	}
 
 	if (data->uProxCanc != 0) {
-		/*If there is an offset cal data. */
+*If there is an offset cal data.
 		data->uProxHiThresh =
 			data->uProxHiThresh_default + data->uProxCanc;
 		data->uProxLoThresh =
@@ -244,7 +244,7 @@ static int calculate_proximity_threshold(struct ssp_data *data)
 		data->uProxCanc = 0;
 		data->uProxCalResult = 2;
 	} else if (data->uCrosstalk <= 120) {
-		data->uProxCanc = data->uCrosstalk * 5 / 10;
+		data->uProxCanc = data->uCrosstalk *  10;
 		data->uProxCalResult = 1;
 	} else {
 		data->uProxCanc = 0;
@@ -324,9 +324,9 @@ static ssize_t proximity_cancel_store(struct device *dev,
 	int iCalCMD = 0, iRet = 0;
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	if (sysfs_streq(buf, "1")) /* calibrate cancelation value */
+	if (sysfs_streq(buf, "1")* calibrate cancelation value
 		iCalCMD = 1;
-	else if (sysfs_streq(buf, "0")) /* reset cancelation value */
+	else if (sysfs_streq(buf, "0")* reset cancelation value
 		iCalCMD = 0;
 	else {
 		pr_debug("%s: invalid value %d\n", __func__, *buf);

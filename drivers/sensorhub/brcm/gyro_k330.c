@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,17 +11,17 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR		"STM"
 #define CHIP_ID		"K330"
 
-#define CALIBRATION_FILE_PATH	"/efs/gyro_cal_data"
+#define CALIBRATION_FILE_PATHegyro_cal_data"
 #define CALIBRATION_DATA_AMOUNT	20
 
 static ssize_t gyro_vendor_show(struct device *dev,

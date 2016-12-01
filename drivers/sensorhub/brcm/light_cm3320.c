@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,15 +11,16 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-#define	VENDOR		"AMS"
-#define	CHIP_ID		"TMG399X"
+#include "ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#define	VENDOR		"CAPELLA"
+#define	CHIP_ID_3320	"CM3320"
+#define	CHIP_ID		"CM3323"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 static ssize_t light_vendor_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -29,7 +30,7 @@ static ssize_t light_vendor_show(struct device *dev,
 static ssize_t light_name_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	return sprintf(buf, "%s\n", CHIP_ID);
+	return sprintf(buf, "%s\n", CHIP_ID_3320);
 }
 
 static ssize_t light_lux_show(struct device *dev,
@@ -37,10 +38,9 @@ static ssize_t light_lux_show(struct device *dev,
 {
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	return sprintf(buf, "%u,%u,%u,%u,%u,%u\n",
+	return sprintf(buf, "%u,%u,%u,%u\n",
 		data->buf[LIGHT_SENSOR].r, data->buf[LIGHT_SENSOR].g,
-		data->buf[LIGHT_SENSOR].b, data->buf[LIGHT_SENSOR].w,
-		data->buf[LIGHT_SENSOR].a_time, data->buf[LIGHT_SENSOR].a_gain);
+		data->buf[LIGHT_SENSOR].b, data->buf[LIGHT_SENSOR].w);
 }
 
 static ssize_t light_data_show(struct device *dev,
@@ -48,10 +48,9 @@ static ssize_t light_data_show(struct device *dev,
 {
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	return sprintf(buf, "%u,%u,%u,%u,%u,%u\n",
+	return sprintf(buf, "%u,%u,%u,%u\n",
 		data->buf[LIGHT_SENSOR].r, data->buf[LIGHT_SENSOR].g,
-		data->buf[LIGHT_SENSOR].b, data->buf[LIGHT_SENSOR].w,
-		data->buf[LIGHT_SENSOR].a_time, data->buf[LIGHT_SENSOR].a_gain);
+		data->buf[LIGHT_SENSOR].b, data->buf[LIGHT_SENSOR].w);
 }
 
 static DEVICE_ATTR(vendor, S_IRUGO, light_vendor_show, NULL);

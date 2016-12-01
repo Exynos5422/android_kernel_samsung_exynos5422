@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,15 +11,15 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-#define	VENDOR		"MAXIM"
-#define	CHIP_ID		"MAX88921"
+#include "ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#define	VENDOR		"AMS"
+#define	CHIP_ID		"TMG399X"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 static ssize_t light_vendor_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
@@ -40,7 +40,7 @@ static ssize_t light_lux_show(struct device *dev,
 	return sprintf(buf, "%u,%u,%u,%u,%u,%u\n",
 		data->buf[LIGHT_SENSOR].r, data->buf[LIGHT_SENSOR].g,
 		data->buf[LIGHT_SENSOR].b, data->buf[LIGHT_SENSOR].w,
-		data->buf[LIGHT_SENSOR].ir_cmp, data->buf[LIGHT_SENSOR].amb_pga);
+		data->buf[LIGHT_SENSOR].a_time, data->buf[LIGHT_SENSOR].a_gain);
 }
 
 static ssize_t light_data_show(struct device *dev,
@@ -51,7 +51,7 @@ static ssize_t light_data_show(struct device *dev,
 	return sprintf(buf, "%u,%u,%u,%u,%u,%u\n",
 		data->buf[LIGHT_SENSOR].r, data->buf[LIGHT_SENSOR].g,
 		data->buf[LIGHT_SENSOR].b, data->buf[LIGHT_SENSOR].w,
-		data->buf[LIGHT_SENSOR].ir_cmp, data->buf[LIGHT_SENSOR].amb_pga);
+		data->buf[LIGHT_SENSOR].a_time, data->buf[LIGHT_SENSOR].a_gain);
 }
 
 static DEVICE_ATTR(vendor, S_IRUGO, light_vendor_show, NULL);

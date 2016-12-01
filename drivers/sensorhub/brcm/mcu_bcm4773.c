@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,22 +11,22 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
 
-#define MODEL_NAME			"STM32F401CEY6B"
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
+
+#define MODEL_NAME			"BCM4773IUB2G"
 
 ssize_t mcu_revision_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	return sprintf(buf, "ST01%u,ST01%u\n", get_module_rev(data),
-		data->uCurFirmRev);
+	return sprintf(buf, "BR01%u,BR01%u\n", data->uCurFirmRev,
+			get_module_rev(data));
 }
 
 ssize_t mcu_model_name_show(struct device *dev,
@@ -38,67 +38,25 @@ ssize_t mcu_model_name_show(struct device *dev,
 ssize_t mcu_update_kernel_bin_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	bool bSuccess = false;
-	int iRet = 0;
-	struct ssp_data *data = dev_get_drvdata(dev);
-
-	ssp_dbg("[SSP]: %s - mcu binany update!\n", __func__);
-
-	iRet = forced_to_download_binary(data, UMS_BINARY);
-	if (iRet == SUCCESS) {
-		bSuccess = true;
-		goto out;
-	}
-
-	iRet = forced_to_download_binary(data, KERNEL_BINARY);
-	if (iRet == SUCCESS)
-		bSuccess = true;
-	else
-		bSuccess = false;
-out:
-	return sprintf(buf, "%s\n", (bSuccess ? "OK" : "NG"));
+	ssp_dbg("[SSPBBD]: %s:%d: Ignored some code section.\n",
+		__func__, __LINE__);
+	return sprintf(buf, "NG\n");
 }
 
 ssize_t mcu_update_kernel_crashed_bin_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	bool bSuccess = false;
-	int iRet = 0;
-	struct ssp_data *data = dev_get_drvdata(dev);
-
-	ssp_dbg("[SSP]: %s - mcu binany update!\n", __func__);
-
-	iRet = forced_to_download_binary(data, UMS_BINARY);
-	if (iRet == SUCCESS) {
-		bSuccess = true;
-		goto out;
-	}
-
-	iRet = forced_to_download_binary(data, KERNEL_CRASHED_BINARY);
-	if (iRet == SUCCESS)
-		bSuccess = true;
-	else
-		bSuccess = false;
-out:
-	return sprintf(buf, "%s\n", (bSuccess ? "OK" : "NG"));
+	ssp_dbg("[SSPBBD]: %s:%d: Ignored some code section.\n",
+		__func__, __LINE__);
+	return sprintf(buf, "NG\n");
 }
 
 ssize_t mcu_update_ums_bin_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	bool bSuccess = false;
-	int iRet = 0;
-	struct ssp_data *data = dev_get_drvdata(dev);
-
-	ssp_dbg("[SSP]: %s - mcu binany update!\n", __func__);
-
-	iRet = forced_to_download_binary(data, UMS_BINARY);
-	if (iRet == SUCCESS)
-		bSuccess = true;
-	else
-		bSuccess = false;
-
-	return sprintf(buf, "%s\n", (bSuccess ? "OK" : "NG"));
+	ssp_dbg("[SSPBBD]: %s:%d: Ignored some code section.\n",
+		__func__, __LINE__);
+	return sprintf(buf, "NG\n");
 }
 
 ssize_t mcu_reset_show(struct device *dev,
@@ -111,8 +69,9 @@ ssize_t mcu_reset_show(struct device *dev,
 	return sprintf(buf, "OK\n");
 }
 
-ssize_t mcu_dump_show(struct device *dev, struct device_attribute *attr,
-		char *buf) {
+ssize_t mcu_dump_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
 	struct ssp_data *data = dev_get_drvdata(dev);
 	int status = 1, iDelaycnt = 0;
 
@@ -141,7 +100,8 @@ ssize_t mcu_factorytest_store(struct device *dev,
 	if (sysfs_streq(buf, "1")) {
 		msg = kzalloc(sizeof(*msg), GFP_KERNEL);
 		if (msg == NULL) {
-			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n", __func__);
+			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n",
+				__func__);
 			return -ENOMEM;
 		}
 		msg->cmd = MCU_FACTORY;
@@ -178,7 +138,7 @@ ssize_t mcu_factorytest_show(struct device *dev,
 	ssp_dbg("[SSP] MCU Factory Test Data : %u, %u, %u, %u, %u\n", buffer[0],
 			buffer[1], buffer[2], buffer[3], buffer[4]);
 
-		/* system clock, RTC, I2C Master, I2C Slave, externel pin */
+* system clock, RTC, I2C Master, I2C Slave, externel pin
 	if ((buffer[0] == SUCCESS)
 			&& (buffer[1] == SUCCESS)
 			&& (buffer[2] == SUCCESS)
@@ -203,7 +163,8 @@ ssize_t mcu_sleep_factorytest_store(struct device *dev,
 	if (sysfs_streq(buf, "1")) {
 		msg = kzalloc(sizeof(*msg), GFP_KERNEL);
 		if (msg == NULL) {
-			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n", __func__);
+			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n",
+				__func__);
 			return -ENOMEM;
 		}
 		msg->cmd = MCU_SLEEP_FACTORY;
@@ -212,7 +173,8 @@ ssize_t mcu_sleep_factorytest_store(struct device *dev,
 		msg->buffer = buffer;
 		msg->free_buffer = 0;
 
-		iRet = ssp_spi_async(data, msg);
+/ iRet = ssp_spi_async(data, msg);
+		iRet = ssp_spi_sync(data, msg, 10000);
 
 	} else {
 		pr_err("[SSP]: %s - invalid value %d\n", __func__, *buf);
@@ -253,17 +215,17 @@ ssize_t mcu_sleep_factorytest_show(struct device *dev,
 
 exit:
 	ssp_dbg("[SSP]: %s Result\n"
-		"accel %d,%d,%d\n"
-		"gyro %d,%d,%d\n"
-		"mag %d,%d,%d\n"
-		"baro %d,%d\n"
-		"ges %d,%d,%d,%d\n"
-		"prox %u,%u\n"
-		"temp %d,%d,%d\n"
+		"[SSP]: accel %d,%d,%d\n"
+		"[SSP]: gyro %d,%d,%d\n"
+		"[SSP]: mag %d,%d,%d\n"
+		"[SSP]: baro %d,%d\n"
+		"[SSP]: ges %d,%d,%d,%d\n"
+		"[SSP]: prox %u,%u\n"
+		"[SSP]: temp %d,%d,%d\n"
 #if defined(CONFIG_SENSORS_SSP_TMG399X) || defined(CONFIG_SENSORS_SSP_MAX88921)
-		"light %u,%u,%u,%u,%u,%u\n", __func__,
+		"[SSP]: light %u,%u,%u,%u,%u,%u\n", __func__,
 #else
-		"light %u,%u,%u,%u\n", __func__,
+		"[SSP]: light %u,%u,%u,%u\n", __func__,
 #endif
 		fsb[ACCELEROMETER_SENSOR].x, fsb[ACCELEROMETER_SENSOR].y,
 		fsb[ACCELEROMETER_SENSOR].z, fsb[GYROSCOPE_SENSOR].x,
@@ -278,11 +240,11 @@ exit:
 		fsb[TEMPERATURE_HUMIDITY_SENSOR].y,
 		fsb[TEMPERATURE_HUMIDITY_SENSOR].z,
 		fsb[LIGHT_SENSOR].r, fsb[LIGHT_SENSOR].g, fsb[LIGHT_SENSOR].b,
-		fsb[LIGHT_SENSOR].w,
+		fsb[LIGHT_SENSOR].w
 #if defined(CONFIG_SENSORS_SSP_TMG399X)
-		fsb[LIGHT_SENSOR].a_time, fsb[LIGHT_SENSOR].a_gain
+		,fsb[LIGHT_SENSOR].a_time, fsb[LIGHT_SENSOR].a_gain
 #elif defined(CONFIG_SENSORS_SSP_MAX88921)
-		fsb[LIGHT_SENSOR].ir_cmp, fsb[LIGHT_SENSOR].amb_pga
+		,fsb[LIGHT_SENSOR].ir_cmp, fsb[LIGHT_SENSOR].amb_pga
 #endif
 		);
 

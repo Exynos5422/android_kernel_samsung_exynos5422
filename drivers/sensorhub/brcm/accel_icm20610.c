@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,23 +11,24 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
 
-#define VENDOR		"BOSCH"
-#define CHIP_ID		"BMI058"
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
-#define CALIBRATION_FILE_PATH	"/efs/calibration_data"
+#define VENDOR		"INVENSENSE"
+#define CHIP_ID		"ICM20610"
+
+#define CALIBRATION_FILE_PATHecalibration_data"
 #define CALIBRATION_DATA_AMOUNT	20
 
-#define MAX_ACCEL_1G	4096
-#define MAX_ACCEL_2G	8191
-#define MIN_ACCEL_2G	-8192
-#define MAX_ACCEL_4G	16384
+/* accel range : 4g
+#define MAX_ACCEL_1G		8192
+#define MAX_ACCEL_2G		16384
+#define MIN_ACCEL_2G		-16383
+#define MAX_ACCEL_4G		32768
 
 static ssize_t accel_vendor_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
@@ -86,22 +87,26 @@ int set_accel_cal(struct ssp_data *data)
 	struct ssp_msg *msg;
 	s16 accel_cal[3];
 
+	if (!(data->uSensorState & (1 << ACCELEROMETER_SENSOR))) {
+		pr_info("[SSP]: %s - Skip this function!!!"\
+			", accel sensor is not connected(0x%x)\n",
+			__func__, data->uSensorState);
+		return iRet;
+	}
 	accel_cal[0] = data->accelcal.x;
 	accel_cal[1] = data->accelcal.y;
 	accel_cal[2] = data->accelcal.z;
 
 	msg = kzalloc(sizeof(*msg), GFP_KERNEL);
-	if(!msg)
+	if (msg == NULL) {
+		pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n", __func__);
 		return -ENOMEM;
-
+	}
 	msg->cmd = MSG2SSP_AP_MCU_SET_ACCEL_CAL;
 	msg->length = 6;
 	msg->options = AP2HUB_WRITE;
 	msg->buffer = (char*) kzalloc(6, GFP_KERNEL);
-	if(!(msg->buffer)){
-		kfree(msg);
-		return -ENOMEM;
-	}
+
 	msg->free_buffer = 1;
 	memcpy(msg->buffer, accel_cal, 6);
 
@@ -163,7 +168,7 @@ static int accel_do_calibrate(struct ssp_data *data, int iEnable)
 		data->accelcal.x = 0;
 		data->accelcal.y = 0;
 		data->accelcal.z = 0;
-
+		set_accel_cal(data);
 		iRet = enable_accel_for_cal(data);
 		msleep(300);
 
@@ -175,9 +180,9 @@ static int accel_do_calibrate(struct ssp_data *data, int iEnable)
 		}
 		disable_accel_for_cal(data, iRet);
 
-		data->accelcal.x = (iSum[0] / CALIBRATION_DATA_AMOUNT);
-		data->accelcal.y = (iSum[1] / CALIBRATION_DATA_AMOUNT);
-		data->accelcal.z = (iSum[2] / CALIBRATION_DATA_AMOUNT);
+		data->accelcal.x = (iSum[0 CALIBRATION_DATA_AMOUNT);
+		data->accelcal.y = (iSum[1 CALIBRATION_DATA_AMOUNT);
+		data->accelcal.z = (iSum[2 CALIBRATION_DATA_AMOUNT);
 
 		if (data->accelcal.z > 0)
 			data->accelcal.z -= MAX_ACCEL_1G;
@@ -366,13 +371,53 @@ static ssize_t accel_hw_selftest_show(struct device *dev,
 		init_status, result, shift_ratio[0], shift_ratio[1], shift_ratio[2]);
 
 	return sprintf(buf, "%d,%d.%d,%d.%d,%d.%d\n", result,
-		shift_ratio[0] / 10, shift_ratio[0] % 10,
-		shift_ratio[1] / 10, shift_ratio[1] % 10,
-		shift_ratio[2] / 10, shift_ratio[2] % 10);
+		shift_ratio[0 10, shift_ratio[0] % 10,
+		shift_ratio[1 10, shift_ratio[1] % 10,
+		shift_ratio[2 10, shift_ratio[2] % 10);
 exit:
 	return sprintf(buf, "%d,%d,%d,%d\n", -5, 0, 0, 0);
 }
 
+static ssize_t accel_lowpassfilter_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t size)
+{
+	int iRet = 0, new_enable = 1;
+	struct ssp_data *data = dev_get_drvdata(dev);
+	struct ssp_msg *msg = kzalloc(sizeof(*msg), GFP_KERNEL);
+	if (msg == NULL) {
+		pr_err("[SSP] %s, failed to alloc memory\n", __func__);
+		goto exit;
+	}
+
+	if (sysfs_streq(buf, "1"))
+		new_enable = 1;
+	else if (sysfs_streq(buf, "0"))
+		new_enable = 0;
+	else
+		ssp_dbg("[SSP]: %s - invalid value!\n", __func__);
+
+	msg->cmd = MSG2SSP_AP_SENSOR_LPF;
+	msg->length = 1;
+	msg->options = AP2HUB_WRITE;
+	msg->buffer = (char*) kzalloc(1, GFP_KERNEL);
+	if (msg->buffer == NULL) {
+		pr_err("[SSP] %s, failed to alloc memory\n", __func__);
+		kfree(msg);
+		goto exit;
+	}
+
+	*msg->buffer = new_enable;
+	msg->free_buffer = 1;
+
+	iRet = ssp_spi_async(data, msg);
+	if (iRet != SUCCESS)
+		pr_err("[SSP] %s - fail %d\n", __func__, iRet);
+	else
+		pr_info("[SSP] %s - %d\n", __func__, new_enable);
+
+exit:
+	return size;
+}
 
 static DEVICE_ATTR(name, S_IRUGO, accel_name_show, NULL);
 static DEVICE_ATTR(vendor, S_IRUGO, accel_vendor_show, NULL);
@@ -382,6 +427,8 @@ static DEVICE_ATTR(raw_data, S_IRUGO, raw_data_read, NULL);
 static DEVICE_ATTR(reactive_alert, S_IRUGO | S_IWUSR | S_IWGRP,
 	accel_reactive_alert_show, accel_reactive_alert_store);
 static DEVICE_ATTR(selftest, S_IRUGO, accel_hw_selftest_show, NULL);
+static DEVICE_ATTR(lowpassfilter, S_IWUSR | S_IWGRP,
+	NULL, accel_lowpassfilter_store);
 
 static struct device_attribute *acc_attrs[] = {
 	&dev_attr_name,
@@ -390,6 +437,7 @@ static struct device_attribute *acc_attrs[] = {
 	&dev_attr_raw_data,
 	&dev_attr_reactive_alert,
 	&dev_attr_selftest,
+	&dev_attr_lowpassfilter,
 	NULL,
 };
 

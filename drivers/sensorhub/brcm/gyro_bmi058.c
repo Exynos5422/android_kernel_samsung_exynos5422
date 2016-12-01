@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,25 +11,25 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include <linux/kernel.h>
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include <linkernel.h>
+#include "ssp.h"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR		"BOSCH"
 #define CHIP_ID		"BMI058"
 
-#define CALIBRATION_FILE_PATH	"/efs/gyro_cal_data"
+#define CALIBRATION_FILE_PATHegyro_cal_data"
 #define CALIBRATION_DATA_AMOUNT            20
 #define SELFTEST_DATA_AMOUNT               64
 #define SELFTEST_LIMITATION_OF_ERROR       5250
-///////////////////////////
+
 #define VERBOSE_OUT 1
 #define DEF_GYRO_FULLSCALE	2000
-#define DEF_GYRO_SENS	(32768 / DEF_GYRO_FULLSCALE)
+#define DEF_GYRO_SENS	(3276 DEF_GYRO_FULLSCALE)
 #define DEF_BIAS_LSB_THRESH_SELF	(20 * DEF_GYRO_SENS)
 #define DEF_BIAS_LSB_THRESH_SELF_6500	(30 * DEF_GYRO_SENS)
 #define DEF_RMS_LSB_TH_SELF (5 * DEF_GYRO_SENS)
@@ -90,9 +90,9 @@ static int save_gyro_caldata(struct ssp_data *data, s16 *iCalData)
 	struct file *cal_filp = NULL;
 	mm_segment_t old_fs;
 
-	data->gyrocal.x = iCalData[0]; // << 2;
-	data->gyrocal.y = iCalData[1]; // << 2;
-	data->gyrocal.z = iCalData[2]; //<< 2;
+	data->gyrocal.x = iCalData[0]/ << 2;
+	data->gyrocal.y = iCalData[1]/ << 2;
+	data->gyrocal.z = iCalData[2]/<< 2;
 
 	ssp_dbg("[SSP]: do gyro calibrate %d, %d, %d\n",
 		data->gyrocal.x, data->gyrocal.y, data->gyrocal.z);
@@ -252,7 +252,7 @@ static ssize_t bmi058_gyro_selftest_show(struct device *dev,
 		chTempBuf[1], chTempBuf[2], chTempBuf[3], chTempBuf[4],
 		chTempBuf[5], chTempBuf[6], chTempBuf[7], chTempBuf[8],
 		chTempBuf[9], chTempBuf[10], chTempBuf[11], chTempBuf[12]);
-	/* Should I get bist? */
+	/* Should I get bist?
 	selftest = chTempBuf[0];
 	if (selftest == 0)
 		bist = 1;
@@ -270,25 +270,25 @@ static ssize_t bmi058_gyro_selftest_show(struct device *dev,
 				chTempBuf[15]);
 	iCalData[2] = (s16)((chTempBuf[18] << 8) +
 				chTempBuf[17]);
-	//shift_ratio[1] = (s16)((chTempBuf[4] << 8) +chTempBuf[3]);
-	//total_count = (int)((chTempBuf[11] << 24) +(chTempBuf[10] << 16) + (chTempBuf[9] << 8) +chTempBuf[8]);
+shift_ratio[1] = (s16)((chTempBuf[4] << 8) +chTempBuf[3]);
+total_count = (int)((chTempBuf[11] << 24) +(chTempBuf[10] << 16) + (chTempBuf[9] << 8) +chTempBuf[8]);
 	pr_info("[SSP] gyro bist: %d, selftest: %d\n", bist, selftest);
 	pr_info("[SSP] gyro X: %d, Y: %d, Z: %d\n", datax_check, datay_check, dataz_check);
 	pr_info("[SSP] iCalData X: %d, Y: %d, Z: %d\n", iCalData[0], iCalData[1], iCalData[2]);
-	//pr_info("[SSP] avg %+8ld %+8ld %+8ld (LSB)\n", avg[0], avg[1], avg[2]);
+pr_info("[SSP] avg %+8ld %+8ld %+8ld (LSB)\n", avg[0], avg[1], avg[2]);
 
 	if ((datax_check <= SELFTEST_LIMITATION_OF_ERROR)
 		&& (datay_check <= SELFTEST_LIMITATION_OF_ERROR)
 		&& (dataz_check <= SELFTEST_LIMITATION_OF_ERROR)) {
 		pr_info("[SENSOR]: %s - Gyro zero rate OK!- Gyro selftest Pass\n", __func__);
-		//bmg160_get_caldata(data);
+/bmg160_get_caldata(data);
 		save_gyro_caldata(data, iCalData);
 	} else {
 		pr_info("[SENSOR]: %s - Gyro zero rate NG!- Gyro selftest fail!\n", __func__);
 		selftest |= 1;
 	}
 
-	#if 0 /*Do Not saveing gyro cal after selftest NOW at BMI058*/
+	#if *Do Not saveing gyro cal after selftest NOW at BMI05
 	if (likely(!ret_val)) {
 		save_gyro_caldata(data, iCalData);
 	} else {
@@ -302,15 +302,15 @@ static ssize_t bmi058_gyro_selftest_show(struct device *dev,
 exit:
 	pr_info("%d,%d,%d.%03d,%d.%03d,%d.%03d\n",
 			selftest ? 0 : 1, bist,
-			(datax_check / 1000), (datax_check % 1000),
-			(datay_check / 1000), (datay_check % 1000),
-			(dataz_check / 1000), (dataz_check % 1000));
+			(datax_chec 1000), (datax_check % 1000),
+			(datay_chec 1000), (datay_check % 1000),
+			(dataz_chec 1000), (dataz_check % 1000));
 
 	return sprintf(buf, "%d,%d,%d.%03d,%d.%03d,%d.%03d," "%d,%d,%d,%d,%d,%d,%d,%d" "\n",
 			selftest ? 0 : 1, bist,
-			(datax_check / 1000), (datax_check % 1000),
-			(datay_check / 1000), (datay_check % 1000),
-			(dataz_check / 1000), (dataz_check % 1000),
+			(datax_chec 1000), (datax_check % 1000),
+			(datay_chec 1000), (datay_check % 1000),
+			(dataz_chec 1000), (dataz_check % 1000),
 			iRet ,iRet ,iRet ,iRet ,iRet ,iRet ,iRet ,iRet);
 }
 

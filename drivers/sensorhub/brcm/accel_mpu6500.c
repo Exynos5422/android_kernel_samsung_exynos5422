@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,17 +11,17 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR		"INVENSENSE"
 #define CHIP_ID		"MPU6500"
 
-#define CALIBRATION_FILE_PATH	"/efs/calibration_data"
+#define CALIBRATION_FILE_PATHecalibration_data"
 #define CALIBRATION_DATA_AMOUNT	20
 
 #define MAX_ACCEL_1G	16384
@@ -179,9 +179,9 @@ static int accel_do_calibrate(struct ssp_data *data, int iEnable)
 		}
 		disable_accel_for_cal(data, iRet);
 
-		data->accelcal.x = (iSum[0] / CALIBRATION_DATA_AMOUNT);
-		data->accelcal.y = (iSum[1] / CALIBRATION_DATA_AMOUNT);
-		data->accelcal.z = (iSum[2] / CALIBRATION_DATA_AMOUNT);
+		data->accelcal.x = (iSum[0 CALIBRATION_DATA_AMOUNT);
+		data->accelcal.y = (iSum[1 CALIBRATION_DATA_AMOUNT);
+		data->accelcal.z = (iSum[2 CALIBRATION_DATA_AMOUNT);
 
 		if (data->accelcal.z > 0)
 			data->accelcal.z -= MAX_ACCEL_1G;
@@ -370,9 +370,9 @@ static ssize_t accel_hw_selftest_show(struct device *dev,
 		init_status, result, shift_ratio[0], shift_ratio[1], shift_ratio[2]);
 
 	return sprintf(buf, "%d,%d.%d,%d.%d,%d.%d\n", result,
-		shift_ratio[0] / 10, shift_ratio[0] % 10,
-		shift_ratio[1] / 10, shift_ratio[1] % 10,
-		shift_ratio[2] / 10, shift_ratio[2] % 10);
+		shift_ratio[0 10, shift_ratio[0] % 10,
+		shift_ratio[1 10, shift_ratio[1] % 10,
+		shift_ratio[2 10, shift_ratio[2] % 10);
 exit:
 	return sprintf(buf, "%d,%d,%d,%d\n", -5, 0, 0, 0);
 }

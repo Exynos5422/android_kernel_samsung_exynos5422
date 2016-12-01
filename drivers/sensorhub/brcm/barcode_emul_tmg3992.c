@@ -1,5 +1,5 @@
-#include "../ssp.h"
-#include <linux/sec_sysfs.h>
+#include "ssp.h"
+#include <linsec_sysfs.h>
 
 #define	VENDOR		"AMS"
 #define	CHIP_ID		"TMG399x"
@@ -17,9 +17,9 @@ static struct reg_index_table reg_id_table[15] = {
 #define BEAMING_OFF	0
 #define STOP_BEAMING	0
 
-#define COUNT_TEST	48 /* 0 */
-#define REGISTER_TEST	49 /* 1 */
-#define DATA_TEST	50 /* 2 */
+#define COUNT_TEST	4* 0
+#define REGISTER_TEST	4* 1
+#define DATA_TEST	5* 2
 
 enum {
 	dataset = 0,

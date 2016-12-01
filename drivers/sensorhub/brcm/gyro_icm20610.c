@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,24 +11,23 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include <linux/kernel.h>
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include <linkernel.h>
+#include "ssp.h"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR		"INVENSENSE"
-#define CHIP_ID		"MPU6500"
+#define CHIP_ID		"ICM20610"
 
-#define CALIBRATION_FILE_PATH	"/efs/gyro_cal_data"
+#define CALIBRATION_FILE_PATHegyro_cal_data"
 #define VERBOSE_OUT 1
 #define CALIBRATION_DATA_AMOUNT	20
 #define DEF_GYRO_FULLSCALE	2000
-#define DEF_GYRO_SENS	(32768 / DEF_GYRO_FULLSCALE)
-#define DEF_BIAS_LSB_THRESH_SELF	(20 * DEF_GYRO_SENS)
-#define DEF_BIAS_LSB_THRESH_SELF_6500	(30 * DEF_GYRO_SENS)
+#define DEF_GYRO_SENS	(3276 DEF_GYRO_FULLSCALE)
+#define DEF_BIAS_LSB_THRESH_SELF	(40 * DEF_GYRO_SENS)
 #define DEF_RMS_LSB_TH_SELF (5 * DEF_GYRO_SENS)
 #define DEF_RMS_THRESH	((DEF_RMS_LSB_TH_SELF) * (DEF_RMS_LSB_TH_SELF))
 #define DEF_SCALE_FOR_FLOAT (1000)
@@ -87,9 +86,9 @@ static int save_gyro_caldata(struct ssp_data *data, s16 *iCalData)
 	struct file *cal_filp = NULL;
 	mm_segment_t old_fs;
 
-	data->gyrocal.x = iCalData[0] << 2;
-	data->gyrocal.y = iCalData[1] << 2;
-	data->gyrocal.z = iCalData[2] << 2;
+	data->gyrocal.x = iCalData[0];
+	data->gyrocal.y = iCalData[1];
+	data->gyrocal.z = iCalData[2];
 
 	ssp_dbg("[SSP]: do gyro calibrate %d, %d, %d\n",
 		data->gyrocal.x, data->gyrocal.y, data->gyrocal.z);
@@ -175,7 +174,7 @@ static ssize_t gyro_power_on(struct device *dev,
 	return sprintf(buf, "%d\n", 1);
 }
 
-short mpu6500_gyro_get_temp(struct ssp_data *data)
+short ICM20610_gyro_get_temp(struct ssp_data *data)
 {
 	char chTempBuf[2] = { 0};
 	unsigned char reg[2];
@@ -216,11 +215,11 @@ static ssize_t gyro_get_temp(struct device *dev,
 	short temperature = 0;
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	temperature = mpu6500_gyro_get_temp(data);
+	temperature = ICM20610_gyro_get_temp(data);
 	return sprintf(buf, "%d\n", temperature);
 }
 
-u32 mpu6050_selftest_sqrt(u32 sqsum)
+static u32 icm20610_selftest_sqrt(u32 sqsum)
 {
 	u32 sq_rt;
 	u32 g0, g1, g2, g3, g4;
@@ -228,10 +227,10 @@ u32 mpu6050_selftest_sqrt(u32 sqsum)
 	u32 next;
 	u32 step;
 
-	g4 = sqsum / 100000000;
-	g3 = (sqsum - g4 * 100000000) / 1000000;
-	g2 = (sqsum - g4 * 100000000 - g3 * 1000000) / 10000;
-	g1 = (sqsum - g4 * 100000000 - g3 * 1000000 - g2 * 10000) / 100;
+	g4 = sqsu 100000000;
+	g3 = (sqsum - g4 * 100000000 1000000;
+	g2 = (sqsum - g4 * 100000000 - g3 * 1000000 10000;
+	g1 = (sqsum - g4 * 100000000 - g3 * 1000000 - g2 * 10000 100;
 	g0 = (sqsum - g4 * 100000000 - g3 * 1000000 - g2 * 10000 - g1 * 100);
 
 	next = g4;
@@ -286,7 +285,7 @@ u32 mpu6050_selftest_sqrt(u32 sqsum)
 	return sq_rt;
 }
 
-static ssize_t mpu6500_gyro_selftest(struct device *dev,
+static ssize_t gyro_selftest_store(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
 	char chTempBuf[36] = { 0,};
@@ -301,7 +300,7 @@ static ssize_t mpu6500_gyro_selftest(struct device *dev,
 	int iRet = 0;
 	int dps_rms[3] = { 0, };
 	u32 temp = 0;
-	int bias_thresh = DEF_BIAS_LSB_THRESH_SELF_6500;
+	int bias_thresh = DEF_BIAS_LSB_THRESH_SELF;
 	struct ssp_data *data = dev_get_drvdata(dev);
 
 	struct ssp_msg *msg = kzalloc(sizeof(*msg), GFP_KERNEL);
@@ -325,7 +324,7 @@ static ssize_t mpu6500_gyro_selftest(struct device *dev,
 
 	data->uTimeOutCnt = 0;
 
-	pr_err("[SSP]%d %d %d %d %d %d %d %d %d %d %d %d", chTempBuf[0],
+	pr_err("[SSP]%d %d %d %d %d %d %d %d %d %d %d %d\n", chTempBuf[0],
 		chTempBuf[1], chTempBuf[2], chTempBuf[3], chTempBuf[4],
 		chTempBuf[5], chTempBuf[6], chTempBuf[7], chTempBuf[8],
 		chTempBuf[9], chTempBuf[10], chTempBuf[11]);
@@ -382,24 +381,24 @@ static ssize_t mpu6500_gyro_selftest(struct device *dev,
 		pr_err("[SSP] %s - hw selftest fail(%d), sw selftest skip\n",
 			__func__, hw_result);
 		return sprintf(buf, "-1,0,0,0,0,0,0,%d.%d,%d.%d,%d.%d,0,0,0\n",
-			shift_ratio[0] / 10, shift_ratio[0] % 10,
-			shift_ratio[1] / 10, shift_ratio[1] % 10,
-			shift_ratio[2] / 10, shift_ratio[2] % 10);
+			shift_ratio[0 10, shift_ratio[0] % 10,
+			shift_ratio[1 10, shift_ratio[1] % 10,
+			shift_ratio[2 10, shift_ratio[2] % 10);
 	}
-	gyro_bias[0] = (avg[0] * DEF_SCALE_FOR_FLOAT) / DEF_GYRO_SENS;
-	gyro_bias[1] = (avg[1] * DEF_SCALE_FOR_FLOAT) / DEF_GYRO_SENS;
-	gyro_bias[2] = (avg[2] * DEF_SCALE_FOR_FLOAT) / DEF_GYRO_SENS;
+	gyro_bias[0] = (avg[0] * DEF_SCALE_FOR_FLOAT DEF_GYRO_SENS;
+	gyro_bias[1] = (avg[1] * DEF_SCALE_FOR_FLOAT DEF_GYRO_SENS;
+	gyro_bias[2] = (avg[2] * DEF_SCALE_FOR_FLOAT DEF_GYRO_SENS;
 	iCalData[0] = (s16)avg[0];
 	iCalData[1] = (s16)avg[1];
 	iCalData[2] = (s16)avg[2];
 
 	if (VERBOSE_OUT) {
 		pr_info("[SSP] abs bias : %+8d.%03d %+8d.%03d %+8d.%03d (dps)\n",
-			(int)abs(gyro_bias[0]) / DEF_SCALE_FOR_FLOAT,
+			(int)abs(gyro_bias[0] DEF_SCALE_FOR_FLOAT,
 			(int)abs(gyro_bias[0]) % DEF_SCALE_FOR_FLOAT,
-			(int)abs(gyro_bias[1]) / DEF_SCALE_FOR_FLOAT,
+			(int)abs(gyro_bias[1] DEF_SCALE_FOR_FLOAT,
 			(int)abs(gyro_bias[1]) % DEF_SCALE_FOR_FLOAT,
-			(int)abs(gyro_bias[2]) / DEF_SCALE_FOR_FLOAT,
+			(int)abs(gyro_bias[2] DEF_SCALE_FOR_FLOAT,
 			(int)abs(gyro_bias[2]) % DEF_SCALE_FOR_FLOAT);
 	}
 
@@ -413,22 +412,22 @@ static ssize_t mpu6500_gyro_selftest(struct device *dev,
 	}
 	/* 3rd, check RMS for dead gyros
 	   If any of the RMS noise value returns zero,
-	   then we might have dead gyro or FIFO/register failure,
-	   the part is sleeping, or the part is not responsive */
+	   then we might have dead gyro or FIregister failure,
+	   the part is sleeping, or the part is not responsive
 	if (rms[0] == 0 || rms[1] == 0 || rms[2] == 0)
 		ret_val |= 1 << 6;
 
 	if (VERBOSE_OUT) {
 		pr_info("[SSP] RMS ^ 2 : %+8ld %+8ld %+8ld\n",
-			(long)rms[0] / total_count,
-			(long)rms[1] / total_count, (long)rms[2] / total_count);
+			(long)rms[0 total_count,
+			(long)rms[1 total_count, (long)rms[2 total_count);
 	}
 
 	for (j = 0; j < 3; j++) {
-		if (unlikely(rms[j] / total_count > DEF_RMS_THRESH)) {
+		if (unlikely(rms[j total_count > DEF_RMS_THRESH)) {
 			pr_err("[SSP] %s-Gyro rms (%ld) exceeded threshold "
 				"(threshold = %d LSB)\n", a_name[j],
-				rms[j] / total_count, DEF_RMS_THRESH);
+				rms[j total_count, DEF_RMS_THRESH);
 			ret_val |= 1 << (7 + j);
 		}
 	}
@@ -436,28 +435,28 @@ static ssize_t mpu6500_gyro_selftest(struct device *dev,
 	for (i = 0; i < 3; i++) {
 		if (rms[i] > 10000) {
 			temp =
-			    ((u32) (rms[i] / total_count)) *
+			    ((u32) (rms[i total_count)) *
 			    DEF_RMS_SCALE_FOR_RMS;
 		} else {
 			temp =
-			    ((u32) (rms[i] * DEF_RMS_SCALE_FOR_RMS)) /
+			    ((u32) (rms[i] * DEF_RMS_SCALE_FOR_RMS)
 			    total_count;
 		}
 		if (rms[i] < 0)
 			temp = 1 << 31;
 
-		dps_rms[i] = mpu6050_selftest_sqrt(temp) / DEF_GYRO_SENS;
+		dps_rms[i] = icm20610_selftest_sqrt(temp DEF_GYRO_SENS;
 
 		gyro_rms[i] =
-		    dps_rms[i] * DEF_SCALE_FOR_FLOAT / DEF_SQRT_SCALE_FOR_RMS;
+		    dps_rms[i] * DEF_SCALE_FOR_FLOA DEF_SQRT_SCALE_FOR_RMS;
 	}
 
 	pr_info("[SSP] RMS : %+8d.%03d	 %+8d.%03d  %+8d.%03d (dps)\n",
-		(int)abs(gyro_rms[0]) / DEF_SCALE_FOR_FLOAT,
+		(int)abs(gyro_rms[0] DEF_SCALE_FOR_FLOAT,
 		(int)abs(gyro_rms[0]) % DEF_SCALE_FOR_FLOAT,
-		(int)abs(gyro_rms[1]) / DEF_SCALE_FOR_FLOAT,
+		(int)abs(gyro_rms[1] DEF_SCALE_FOR_FLOAT,
 		(int)abs(gyro_rms[1]) % DEF_SCALE_FOR_FLOAT,
-		(int)abs(gyro_rms[2]) / DEF_SCALE_FOR_FLOAT,
+		(int)abs(gyro_rms[2] DEF_SCALE_FOR_FLOAT,
 		(int)abs(gyro_rms[2]) % DEF_SCALE_FOR_FLOAT);
 
 	if (likely(!ret_val)) {
@@ -476,24 +475,24 @@ exit:
 		"%d.%d,%d.%d,%d.%d,"
 		"%d,%d,%d\n",
 		__func__, ret_val,
-		(int)abs(gyro_bias[0]/1000),
+		gyro_bias[1000,
 		(int)abs(gyro_bias[0])%1000,
-		(int)abs(gyro_bias[1]/1000),
+		gyro_bias[1000,
 		(int)abs(gyro_bias[1])%1000,
-		(int)abs(gyro_bias[2]/1000),
+		gyro_bias[1000,
 		(int)abs(gyro_bias[2])%1000,
-		gyro_rms[0]/1000,
+		gyro_rms[1000,
 		(int)abs(gyro_rms[0])%1000,
-		gyro_rms[1]/1000,
+		gyro_rms[1000,
 		(int)abs(gyro_rms[1])%1000,
-		gyro_rms[2]/1000,
+		gyro_rms[1000,
 		(int)abs(gyro_rms[2])%1000,
-		shift_ratio[0] / 10, shift_ratio[0] % 10,
-		shift_ratio[1] / 10, shift_ratio[1] % 10,
-		shift_ratio[2] / 10, shift_ratio[2] % 10,
-		(int)(total_count/3),
-		(int)(total_count/3),
-		(int)(total_count/3));
+		shift_ratio[0 10, shift_ratio[0] % 10,
+		shift_ratio[1 10, shift_ratio[1] % 10,
+		shift_ratio[2 10, shift_ratio[2] % 10,
+		(int)(total_cou3),
+		(int)(total_cou3),
+		(int)(total_cou3));
 
 	return sprintf(buf, "%d,"
 		"%d.%03d,%d.%03d,%d.%03d,"
@@ -501,24 +500,24 @@ exit:
 		"%d.%d,%d.%d,%d.%d,"
 		"%d,%d,%d\n",
 		ret_val,
-		(int)abs(gyro_bias[0]/1000),
+		gyro_bias[1000,
 		(int)abs(gyro_bias[0])%1000,
-		(int)abs(gyro_bias[1]/1000),
+		gyro_bias[1000,
 		(int)abs(gyro_bias[1])%1000,
-		(int)abs(gyro_bias[2]/1000),
+		gyro_bias[1000,
 		(int)abs(gyro_bias[2])%1000,
-		gyro_rms[0]/1000,
+		gyro_rms[1000,
 		(int)abs(gyro_rms[0])%1000,
-		gyro_rms[1]/1000,
+		gyro_rms[1000,
 		(int)abs(gyro_rms[1])%1000,
-		gyro_rms[2]/1000,
+		gyro_rms[1000,
 		(int)abs(gyro_rms[2])%1000,
-		shift_ratio[0] / 10, shift_ratio[0] % 10,
-		shift_ratio[1] / 10, shift_ratio[1] % 10,
-		shift_ratio[2] / 10, shift_ratio[2] % 10,
-		(int)(total_count/3),
-		(int)(total_count/3),
-		(int)(total_count/3));
+		shift_ratio[0 10, shift_ratio[0] % 10,
+		shift_ratio[1 10, shift_ratio[1] % 10,
+		shift_ratio[2 10, shift_ratio[2] % 10,
+		(int)(total_cou3),
+		(int)(total_cou3),
+		(int)(total_cou3));
 }
 
 static ssize_t gyro_selftest_dps_store(struct device *dev,
@@ -590,7 +589,7 @@ static DEVICE_ATTR(vendor, S_IRUGO, gyro_vendor_show, NULL);
 static DEVICE_ATTR(power_off, S_IRUGO, gyro_power_off, NULL);
 static DEVICE_ATTR(power_on, S_IRUGO, gyro_power_on, NULL);
 static DEVICE_ATTR(temperature, S_IRUGO, gyro_get_temp, NULL);
-static DEVICE_ATTR(selftest, S_IRUGO, mpu6500_gyro_selftest, NULL);
+static DEVICE_ATTR(selftest, S_IRUGO, gyro_selftest_store, NULL);
 static DEVICE_ATTR(selftest_dps, S_IRUGO | S_IWUSR | S_IWGRP,
 	gyro_selftest_dps_show, gyro_selftest_dps_store);
 

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,15 +11,15 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
+
+#include "ssp.h"
 
 #define	VENDOR		"CAPELLA"
 #define	CHIP_ID		"CM3323"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 static ssize_t light_vendor_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {

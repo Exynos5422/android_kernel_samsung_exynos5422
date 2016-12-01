@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,17 +11,17 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
+
+#include "ssp.h"
 #include "magnetic_yas532.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR		"YAMAHA"
 #define CHIP_ID		"YAS532"
-#define MAG_HW_OFFSET_FILE_PATH	"/efs/hw_offset"
+#define MAG_HW_OFFSET_FILE_PATHehw_offset"
 
 int mag_open_hwoffset(struct ssp_data *data)
 {

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,22 +11,22 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
 
-#define MODEL_NAME			"BCM4773IUB2G"
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
+
+#define MODEL_NAME			"STM32F401CEY6B"
 
 ssize_t mcu_revision_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
 	struct ssp_data *data = dev_get_drvdata(dev);
 
-	return sprintf(buf, "BR01%u,BR01%u\n", data->uCurFirmRev,
-			get_module_rev(data));
+	return sprintf(buf, "ST01%u,ST01%u\n", data->uCurFirmRev,
+		get_module_rev(data));
 }
 
 ssize_t mcu_model_name_show(struct device *dev,
@@ -38,25 +38,67 @@ ssize_t mcu_model_name_show(struct device *dev,
 ssize_t mcu_update_kernel_bin_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	ssp_dbg("[SSPBBD]: %s:%d: Ignored some code section.\n",
-		__func__, __LINE__);
-	return sprintf(buf, "NG\n");
+	bool bSuccess = false;
+	int iRet = 0;
+	struct ssp_data *data = dev_get_drvdata(dev);
+
+	ssp_dbg("[SSP]: %s - mcu binany update!\n", __func__);
+
+	iRet = forced_to_download_binary(data, UMS_BINARY);
+	if (iRet == SUCCESS) {
+		bSuccess = true;
+		goto out;
+	}
+
+	iRet = forced_to_download_binary(data, KERNEL_BINARY);
+	if (iRet == SUCCESS)
+		bSuccess = true;
+	else
+		bSuccess = false;
+out:
+	return sprintf(buf, "%s\n", (bSuccess ? "OK" : "NG"));
 }
 
 ssize_t mcu_update_kernel_crashed_bin_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	ssp_dbg("[SSPBBD]: %s:%d: Ignored some code section.\n",
-		__func__, __LINE__);
-	return sprintf(buf, "NG\n");
+	bool bSuccess = false;
+	int iRet = 0;
+	struct ssp_data *data = dev_get_drvdata(dev);
+
+	ssp_dbg("[SSP]: %s - mcu binany update!\n", __func__);
+
+	iRet = forced_to_download_binary(data, UMS_BINARY);
+	if (iRet == SUCCESS) {
+		bSuccess = true;
+		goto out;
+	}
+
+	iRet = forced_to_download_binary(data, KERNEL_CRASHED_BINARY);
+	if (iRet == SUCCESS)
+		bSuccess = true;
+	else
+		bSuccess = false;
+out:
+	return sprintf(buf, "%s\n", (bSuccess ? "OK" : "NG"));
 }
 
 ssize_t mcu_update_ums_bin_show(struct device *dev,
 	struct device_attribute *attr, char *buf)
 {
-	ssp_dbg("[SSPBBD]: %s:%d: Ignored some code section.\n",
-		__func__, __LINE__);
-	return sprintf(buf, "NG\n");
+	bool bSuccess = false;
+	int iRet = 0;
+	struct ssp_data *data = dev_get_drvdata(dev);
+
+	ssp_dbg("[SSP]: %s - mcu binany update!\n", __func__);
+
+	iRet = forced_to_download_binary(data, UMS_BINARY);
+	if (iRet == SUCCESS)
+		bSuccess = true;
+	else
+		bSuccess = false;
+
+	return sprintf(buf, "%s\n", (bSuccess ? "OK" : "NG"));
 }
 
 ssize_t mcu_reset_show(struct device *dev,
@@ -69,9 +111,8 @@ ssize_t mcu_reset_show(struct device *dev,
 	return sprintf(buf, "OK\n");
 }
 
-ssize_t mcu_dump_show(struct device *dev,
-	struct device_attribute *attr, char *buf)
-{
+ssize_t mcu_dump_show(struct device *dev, struct device_attribute *attr,
+		char *buf) {
 	struct ssp_data *data = dev_get_drvdata(dev);
 	int status = 1, iDelaycnt = 0;
 
@@ -100,8 +141,7 @@ ssize_t mcu_factorytest_store(struct device *dev,
 	if (sysfs_streq(buf, "1")) {
 		msg = kzalloc(sizeof(*msg), GFP_KERNEL);
 		if (msg == NULL) {
-			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n",
-				__func__);
+			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n", __func__);
 			return -ENOMEM;
 		}
 		msg->cmd = MCU_FACTORY;
@@ -138,7 +178,7 @@ ssize_t mcu_factorytest_show(struct device *dev,
 	ssp_dbg("[SSP] MCU Factory Test Data : %u, %u, %u, %u, %u\n", buffer[0],
 			buffer[1], buffer[2], buffer[3], buffer[4]);
 
-		/* system clock, RTC, I2C Master, I2C Slave, externel pin */
+* system clock, RTC, I2C Master, I2C Slave, externel pin
 	if ((buffer[0] == SUCCESS)
 			&& (buffer[1] == SUCCESS)
 			&& (buffer[2] == SUCCESS)
@@ -163,8 +203,7 @@ ssize_t mcu_sleep_factorytest_store(struct device *dev,
 	if (sysfs_streq(buf, "1")) {
 		msg = kzalloc(sizeof(*msg), GFP_KERNEL);
 		if (msg == NULL) {
-			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n",
-				__func__);
+			pr_err("[SSP] %s, failed to alloc memory for ssp_msg\n", __func__);
 			return -ENOMEM;
 		}
 		msg->cmd = MCU_SLEEP_FACTORY;
@@ -173,8 +212,7 @@ ssize_t mcu_sleep_factorytest_store(struct device *dev,
 		msg->buffer = buffer;
 		msg->free_buffer = 0;
 
-		// iRet = ssp_spi_async(data, msg);
-		iRet = ssp_spi_sync(data, msg, 10000);
+		iRet = ssp_spi_async(data, msg);
 
 	} else {
 		pr_err("[SSP]: %s - invalid value %d\n", __func__, *buf);

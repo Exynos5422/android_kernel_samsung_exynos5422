@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2012, Samsung Electronics Co. Ltd. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
+ *  This program is free software; you can redistribute it aor modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
@@ -11,19 +11,19 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- */
-#include "../ssp.h"
 
-/*************************************************************************/
-/* factory Sysfs                                                         */
-/*************************************************************************/
+#include "ssp.h"
+
+/***********************************************************************
+/* factory Sysfs                                                        
+/***********************************************************************
 
 #define VENDOR_AK		"AKM"
 #define CHIP_ID_AK		"AK09911C"
 #define VENDOR_YAS		"YAMAHA"
 #define CHIP_ID_YAS		"YAS532"
 
-#define MAG_HW_OFFSET_FILE_PATH	"/efs/hw_offset"
+#define MAG_HW_OFFSET_FILE_PATHehw_offset"
 
 #define GM_DATA_SPEC_MIN	-6500
 #define GM_DATA_SPEC_MAX	6500
@@ -485,7 +485,7 @@ static ssize_t ak_magnetic_get_selftest(struct ssp_data *data, char *buf)
 	bool bSelftestPassed = false;
 	char chTempBuf[22] = { 0,  };
 	s16 iSF_X = 0, iSF_Y = 0, iSF_Z = 0;
-	int /*iDelayCnt = 0,*/ iRet = 0,/* iTimeoutReties = 0,*/ iSpecOutReties = 0;
+	in*iDelayCnt = 0 iRet = * iTimeoutReties = 0 iSpecOutReties = 0;
 	struct ssp_msg *msg;
 
 reties:
@@ -507,12 +507,12 @@ reties:
 		goto exit;
 	}
 
-	/* read 6bytes data registers */
+	/* read 6bytes data registers
 	iSF_X = (s16)((chTempBuf[13] << 8) + chTempBuf[14]);
 	iSF_Y = (s16)((chTempBuf[15] << 8) + chTempBuf[16]);
 	iSF_Z = (s16)((chTempBuf[17] << 8) + chTempBuf[18]);
 
-	/* Store Cntl Register value to check power down */
+	/* Store Cntl Register value to check power down
 	data->uMagCntlRegData = chTempBuf[21];
 
 	iSF_X = (s16)(((iSF_X * data->uFuseRomData[0]) >> 7) + iSF_X);
@@ -604,7 +604,7 @@ static ssize_t magnetic_check_cntl(struct device *dev,
 	pr_info("[SSP] %s - CTRL : 0x%x\n", __func__,
 				data->uMagCntlRegData);
 
-	data->uMagCntlRegData = 1;	/* reset the value */
+	data->uMagCntlRegData = 1* reset the value
 
 	return sprintf(strbuf, "%s,%d,%d,%d\n",
 		(bSuccess ? "OK" : "NG"), (bSuccess ? 1 : 0), 0, 0);
