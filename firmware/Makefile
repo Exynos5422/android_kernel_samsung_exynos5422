@@ -141,8 +141,13 @@ fw-shipped-$(CONFIG_KEYBOARD_CYPRESS_TOUCH_20075) += \
 						cypress/cypress_20075_k_m06.fw	\
 						cypress/cypress_20075_l_m06.fw
 fw-shipped-$(CONFIG_KEYBOARD_ABOV_TOUCH) += abov/abov_tk.fw
-fw-shipped-$(CONFIG_KEYBOARD_TC300K) += coreriver/tc300k_chagall.fw
+fw-shipped-$(CONFIG_KEYBOARD_ABOV_TOUCH_A8) += abov/abov_tk_a8.fw
+fw-shipped-$(CONFIG_KEYBOARD_TC300K) += coreriver/tc300k_chagall.fw \
+										coreriver/tc350k_gts28.fw \
+										coreriver/tc350k_gts210.fw \
+										coreriver/tc350k_gts210_swap.fw
 fw-shipped-$(CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5) += cypress/cypress_t.fw
+fw-shipped-$(CONFIG_TOUCHSCREEN_MELFAS_MMS449) += tsp_melfas/mms449_a8.fw
 fw-shipped-$(or $(CONFIG_EPEN_WACOM_G10PM), \
 				$(CONFIG_EPEN_WACOM_W9012)) += epen/W9010_T.bin
 fw-shipped-$(CONFIG_EPEN_WACOM_W9012) += epen/W9012_T.bin epen/W9012_TB.bin
